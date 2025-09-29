@@ -56,10 +56,13 @@ public class SecurityConfig {
                 .csrf(csrf -> csrf.disable())
                 .cors(Customizer.withDefaults())
                 .authorizeHttpRequests(auth -> auth
-                        .requestMatchers("/api/login").authenticated()
-                        .requestMatchers("/api/**").hasAnyRole("ADMIN", "USER")
+                        .requestMatchers("/api/register").permitAll()  // registrazione pubblica
+                        .requestMatchers("/api/login").authenticated() // login richiede auth
+                        .requestMatchers("/api/**").hasAnyRole("ADMIN", "USER") // altre API protette
                         .anyRequest().permitAll()
                 )
+
+
                 .httpBasic(Customizer.withDefaults());
 
         return http.build();
