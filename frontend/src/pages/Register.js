@@ -1,41 +1,29 @@
-// src/pages/Login.js
+// src/pages/Register.js
 import React, { useState } from "react";
 import axios from "axios";
 import { useNavigate } from "react-router-dom";
 import { ToastContainer, toast } from "react-toastify";
 import "react-toastify/dist/ReactToastify.css";
 
-function Login() {
+function Register() {
   const [username, setUsername] = useState("");
   const [password, setPassword] = useState("");
   const navigate = useNavigate();
 
-  const handleLogin = async (e) => {
+  const handleRegister = async (e) => {
     e.preventDefault();
 
     try {
-      // chiamiamo il backend /api/login con Basic Auth
-      const response = await axios.get("http://localhost:8080/api/login", {
-        auth: { username, password },
+      await axios.post("http://localhost:8080/api/register", {
+        username,
+        password,
       });
 
-      const role = response.data.role;
-
-      // salvo credenziali e ruolo
-      localStorage.setItem("username", username);
-      localStorage.setItem("password", password);
-      localStorage.setItem("role", role);
-
-      toast.success(`Benvenuto ${username}!`);
-
-      // redirect in base al ruolo
-      setTimeout(() => {
-        if (role === "ADMIN") navigate("/admin", { replace: true });
-        else if (role === "USER") navigate("/user", { replace: true });
-      }, 500);
+      toast.success("Registrazione completata ✅");
+      setTimeout(() => navigate("/login", { replace: true }), 1000);
     } catch (err) {
       console.error(err);
-      toast.error("Credenziali errate o non autorizzato");
+      toast.error("Errore durante la registrazione");
     }
   };
 
@@ -46,8 +34,8 @@ function Login() {
         <div className="col-md-4">
           <div className="card shadow">
             <div className="card-body">
-              <h3 className="text-center mb-4">🔐 Login</h3>
-              <form onSubmit={handleLogin}>
+              <h3 className="text-center mb-4">📝 Registrati</h3>
+              <form onSubmit={handleRegister}>
                 <div className="mb-3">
                   <label className="form-label">Username</label>
                   <input
@@ -68,10 +56,19 @@ function Login() {
                     required
                   />
                 </div>
-                <button type="submit" className="btn btn-success w-100">
-                  Accedi
+                <button type="submit" className="btn btn-primary w-100">
+                  Registrati
                 </button>
               </form>
+
+              <div className="text-center mt-3">
+                <small>
+                  Hai già un account?{" "}
+                  <a href="/login" className="text-success fw-bold">
+                    Accedi
+                  </a>
+                </small>
+              </div>
             </div>
           </div>
         </div>
@@ -80,4 +77,4 @@ function Login() {
   );
 }
 
-export default Login;
+export default Register;
